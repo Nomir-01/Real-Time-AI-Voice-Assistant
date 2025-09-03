@@ -31,7 +31,7 @@ This is a simple voice-driven AI assistant that listens to spoken Urdu, transcri
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/ai-voice-bot.git
+git clone https://github.com/Nomir-01/Real-Time-AI-Voice-Assistant
 cd ai-voice-bot
 ```
 
