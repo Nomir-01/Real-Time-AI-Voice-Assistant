@@ -1,131 +1,75 @@
-# Real-Time AI Voice Assistant (Roman Urdu Assistant)
+# Real-Time AI Voice Assistant
 
-This is a simple voice-driven AI assistant that listens to spoken Urdu, transcribes it, converts it to Roman Urdu, generates intelligent replies using a local AI model (Ollama), and speaks the response out loud. All operations run locally for privacy and customization.
-
----
+A local voice assistant designed for spoken Urdu and Roman Urdu conversations. It records speech, transcribes Urdu audio with Whisper, converts text to Roman Urdu, generates a response with an Ollama-hosted language model, and reads the reply aloud.
 
 ## Features
 
-- Dynamic voice recording with auto-stop after silence
-- Converts spoken Urdu to Roman Urdu using AI
-- Generates replies using an LLM (e.g., Mistral via Ollama)
-- Speaks the reply using text-to-speech
-- Logs each interaction with timestamp
-- Random greeting system at startup
-- Easy configuration and customization
-- Works offline after initial setup
+- Silence-aware microphone recording
+- Urdu speech recognition with Whisper
+- Urdu-to-Roman-Urdu conversion
+- Local response generation through Ollama
+- Text-to-speech playback
+- Configurable greetings and runtime settings
+- Optional timestamped conversation logs
 
----
+## Processing flow
+
+```text
+Microphone → Whisper transcription → Roman Urdu conversion
+           → Ollama response → text-to-speech → speaker
+```
 
 ## Requirements
 
 - Python 3.8 or newer
+- A microphone and audio output device
 - [Ollama](https://ollama.com/) installed and running locally
-- Whisper model downloaded (e.g., `small`)
-- Working microphone and speaker
+- An Ollama model matching `OLLAMA_MODEL` in `config.py`
 
----
-
-## Setup Instructions
-
-### 1. Clone the Repository
+## Setup
 
 ```bash
-git clone https://github.com/Nomir-01/Real-Time-AI-Voice-Assistant
-cd ai-voice-bot
-```
-
-### 2. Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 3. Start the Ollama Model
-
-Ensure Ollama is running and the desired model is available (e.g., `mistral`).
-
-```bash
-ollama run mistral
-```
-
-Check that the model name in `config.py` matches.
-
-### 4. Run the Bot
-
-```bash
+git clone https://github.com/Nomir-01/Real-Time-AI-Voice-Assistant.git
+cd Real-Time-AI-Voice-Assistant
+python -m venv .venv
+python -m pip install -r requirements.txt
+ollama pull mistral
 python main.py
 ```
 
-Speak your query in Urdu. The bot will process, respond in Roman Urdu, and speak the response.
-
-Say `"khatam"` or `"ختم"` to exit.
-
----
+The default configuration uses the Whisper `small` model and Ollama's `mistral` model. Initial model downloads require internet access; inference is local afterward.
 
 ## Configuration
 
-All customizable settings are stored in `config.py`.
+Runtime settings are defined in `config.py`:
 
-```python
-SAMPLE_RATE = 16000             # Microphone sample rate
-SILENCE_THRESHOLD = 500         # Volume threshold for detecting silence
-SILENCE_DURATION = 1.5          # Seconds of silence before auto-stop
-WHISPER_MODEL = "small"         # Whisper model name
-OLLAMA_MODEL = "mistral"        # Ollama model name
-LANGUAGE = "ur"                 # Whisper language code for Urdu
-LOGGING_ENABLED = True          # Enable/disable chat logging
-CHAT_LOG_DIR = "chats"          # Directory to save logs
+- recording sample rate and silence detection
+- Whisper model and language
+- Ollama model
+- chat logging toggle and log directory
+
+Startup greetings can be edited in `greetings_list.py`.
+
+## Project structure
+
+```text
+main.py             Application loop
+recorder.py         Audio capture and Whisper transcription
+romanizer.py        Urdu-to-Roman-Urdu conversion
+chatbot.py          Local LLM response generation
+speaker.py          Text-to-speech output
+logger.py           Timestamped conversation logging
+config.py           Runtime configuration
+greetings_list.py   Startup greeting messages
 ```
 
-To edit greeting messages, modify `greetings_list.py`.
+## Privacy
 
----
+Speech processing and response generation run locally. When logging is enabled, conversations are written to the local `chats/` directory; disable logging in `config.py` when transcripts should not be retained.
 
-## Project Structure
+## Troubleshooting
 
-```
-ai-voice-bot/
-├── main.py                # Main runner file
-├── chatbot.py             # Roman Urdu AI reply handler
-├── recorder.py            # Audio recording and Whisper transcription
-├── romanizer.py           # Urdu to Roman Urdu conversion via Ollama
-├── speaker.py             # Text-to-speech handler
-├── greetings_list.py      # Editable list of startup greetings
-├── config.py              # App settings and constants
-├── logger.py              # Chat logger with timestamps
-├── requirements.txt       # Python dependency list
-└── chats/                 # Folder containing timestamped logs
-```
-
----
-
-## Example Log (in `chats/`)
-
-```
-=== AI Voice Chat Log ===
-Timestamped entries of user and AI conversation
-------------------------------------------------------------
-
-[2025-07-12 17:32:00] AI Greeting: Salam! Main aap ki madad ke liye yahan hoon.
-------------------------------------------------------------
-[2025-07-12 17:32:05] User (Roman Urdu): kia haal hai?
-[2025-07-12 17:32:10] User (Urdu): کیا حال ہے؟
-[2025-07-12 17:32:20] AI Reply: sab theek hai, shukriya.
-------------------------------------------------------------
-```
-
----
-
-## Dependencies
-
-Listed in `requirements.txt`:
-
-```
-numpy
-sounddevice
-scipy
-whisper
-requests
-pyttsx3
-```
+- Confirm Ollama is running and the configured model is installed.
+- Verify the operating system can access the selected microphone.
+- Adjust `SILENCE_THRESHOLD` if recording stops too early or does not stop.
+- Audio packages may require platform-specific system drivers or build tools.
